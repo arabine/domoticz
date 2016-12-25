@@ -23,6 +23,9 @@
 -- Based on your logic, fill the commandArray with device commands. Device name is case sensitive. 
 --
 
+local CounterHiVarName = "CounterHi";
+local CounterLowVarName = "CounterLow";
+
 commandArray = {}
 
 print ("Time based event fired");
@@ -42,8 +45,8 @@ for deviceName, deviceValue in pairs(otherdevices) do
         print ("Juliette temperature: "..temp.."°C humidity: " ..humidity.."%");
         
         local realTemp = tonumber(temp);
-        local counterHi = tonumber(uservariables["CounterHi"]);
-        local counterLo = tonumber(uservariables["CounterLow"]);
+        local counterHi = tonumber(uservariables[CounterHiVarName]);
+        local counterLo = tonumber(uservariables[CounterLowVarName]);
         
         if (counterHi == nil) then
             -- First Time init
@@ -76,12 +79,12 @@ for deviceName, deviceValue in pairs(otherdevices) do
         end
         
         
-        print ("Juliette cmd: "..command);
+        print ("Juliette cmd: "..command.." Hi: "..counterHi.." Lo: "..counterLo);
         -- Save counterHi
-        uservariables["CounterHi"] = tostring(counterHi);
-        uservariables["CounterLow"] = tostring(counterLo);
+        uservariables[CounterHiVarName] = tostring(counterHi);
+        uservariables[CounterLowVarName] = tostring(counterLo);
         -- Set command
-        commandArray['UpdateDevice'] = tostring(idx) .. "|0|" .. tostring(command);
+     --   commandArray['UpdateDevice'] = tostring(idx) .. "|0|" .. tostring(command);
         
         
     end
