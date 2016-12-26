@@ -40,8 +40,7 @@ for deviceName, deviceValue in pairs(otherdevices) do
     if (deviceName == 'Chambre Juliette (2)') then
         
         local temp, humidity, nada = str:match("([%d%.]+);([%d%.]+);([%d%.]+)");
-        local idx = otherdevices_idx["Chauffage juju"]; -- this is the command
-        
+
         print ("Juliette temperature: "..temp.."°C humidity: " ..humidity.."%");
         
         local realTemp = tonumber(temp);
@@ -58,22 +57,25 @@ for deviceName, deviceValue in pairs(otherdevices) do
             counterLo = 0;
         end
         
+        local targetTemperature = 19;
+        local thresholdLow = 5; -- In minutes
+        
         print ("Juliette counters (Hi, Lo): "..counterHi..", "..counterLo);
         
         local command = "Off";
 
-        if (realTemp > 19) then
+        if (realTemp >= targetTemperature) then
             counterHi = counterHi + 1;
             counterLo = 0;
             
-            if (counterHi > 1800) then
+            if (counterHi > 60) then
                 command = "Off";
             end
         else
             counterLo = counterLo + 1;
             counterHi = 0;
             
-            if (counterLo > 1800) then
+            if (counterLo > thresholdLow) then
                 command = "On";
             end
         end
@@ -81,10 +83,10 @@ for deviceName, deviceValue in pairs(otherdevices) do
         
         print ("Juliette cmd: "..command.." Hi: "..counterHi.." Lo: "..counterLo);
         -- Save counterHi
-        uservariables[CounterHiVarName] = tostring(counterHi);
-        uservariables[CounterLowVarName] = tostring(counterLo);
+        commandArray['Variable:'..CounterHiVarName] = tostring(counterHi);
+        commandArray['Variable:'..CounterLowVarName] = tostring(counterLo);
         -- Set command
-     --   commandArray['UpdateDevice'] = tostring(idx) .. "|0|" .. tostring(command);
+        commandArray["Chauffage juju"] = command;
         
         
     end
@@ -112,3 +114,4 @@ for variableName,variableValue in pairs(uservariables) do
 end
 
 return commandArray
+
